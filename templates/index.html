@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>村上春樹風コメントが聞ける東京の天気予報</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/flatly/bootstrap.min.css">
+    <style>
+        body {
+             background-size: cover;
+             background-position: center;
+             transition: background-image 0.5s ease;
+             font-family: 'Helvetica Neue', Arial, sans-serif; /* フォントの変更 */
+             color: #333; /* 全体の文字色 */
+         }
+        .weather-container {
+            padding: 30px;
+            margin: 30px auto; /* 上下の余白を大きく */
+            background-color: rgba(255, 255, 255, 0.9); /* 背景色を少し透明に */
+            border-radius: 10px;
+            max-width: 800px;
+        }
+        h1 {
+            font-family: 'Noto Serif JP', serif;
+            font-weight: bold;
+            color: #343a40; /* タイトルの色 */
+            margin-bottom: 20px; /* 下の余白を大きく */
+            border-bottom: 1px solid #ddd; /* 下線を追加 */
+            padding-bottom: 10px; /* 下線の余白 */
+        }
+        .haruki-comment {
+            font-size: 1.2em;
+            margin-top: 15px;
+            font-style: italic;
+            color: #555;  /* コメントの色 */
+        }
+        label {
+            font-weight: bold;
+            color: #495057; /* ラベルの色 */
+        }
+        button{
+           margin-top: 10px;
+        }
+       .extra-info{
+          margin-top: 10px;
+          color: #555;
+          line-height: 1.6;
+        }
+        #weatherInfo h2{
+            font-size: 2em;
+            font-weight: bold;
+             color: #343a40;
+        }
+       #weatherInfo h3{
+             font-size: 1.4em;
+             margin-top: 0.5em;
+              color: #343a40;
+       }
+        #weatherInfo p{
+              margin-top: 0.5em;
+             line-height: 1.6;
+              color: #555;
+       }
+
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+      <div class="weather-container">
+           <h1 class="text-center">村上春樹風コメントが聞ける東京の天気予報</h1>
+            <div class="form-group">
+                <label for="locationSelect">地域を選択:</label>
+                <select class="form-control" id="locationSelect">
+                     <option value="130010">東京</option>
+                    <option value="130020">大島</option>
+                    <option value="130030">八丈島</option>
+                    <option value="130040">父島</option>
+                </select>
+            </div>
+              <button class="btn btn-primary" onclick="showWeather()">天気を見る</button>
+              <div id="weatherInfo" class="mt-3"></div>
+             <div id="extraInfo" class="mt-3 extra-info"></div>
+             <div id="harukiComment" class="mt-3 haruki-comment"></div>
+            <div id="windComment" class="mt-3"></div>
+         </div>
+    </div>
+    <script>
+        const harukiComments = {
+             "130010": {
+                "sunny": [
+            "まるで世界の終わりみたいに、空が奇妙な色をしている。",
+                "午後の光が、まるで古いレコードみたいに静かに僕を照らしている。",
+                 "今日の天気は、僕がまだ見ぬ世界の片鱗なのかもしれない。",
+                    "東京の空は、まるで僕の知らない物語を映し出しているようだ。",
+                    "太陽は今日も、東京の街を優しく照らしている。"
+        ],
+                "rainy": [
+                    "遠くで誰かが風を数えているような気がした。",
+                "今日の天気は、僕の心みたいに少しばかり歪んでいる。",
+             "この雨は、僕の記憶を洗い流そうとしているのかもしれない。",
+                 "東京の雨は、まるで都会の喧騒を洗い流すようだ。",
+                "雨の音は、東京のコンクリートジャングルに静かに響く。"
+            ],
+                "cloudy": [
+                    "空は、今日もまた静かに物語を語っている。",
+                    "窓の外の景色は、まるで誰かの夢みたいだ。",
+                "僕はどこかで、この天気を知っていたような気がする。",
+                     "曇り空は、東京の街を少しだけ憂鬱に染める。",
+                    "東京の空は、今日の僕の心を映し出す鏡のようだ。"
+                ],
+                 "windy":[
+                    "この風は、どこかの誰かのため息なのだろうか。",
+                      "風の音が、遠い記憶を運んでくる。",
+                       "今日の風は、僕の知らない場所へと僕を誘う。",
+                     "東京の風は、都会の喧騒を吹き飛ばすように吹く。",
+                        "風はいつも、東京の街を何かを囁きかけてくる。",
+
+                 ],
+                  "highTemp":[
+                      "今日の暑さは、まるで僕の心の奥底を熱くするようだ。",
+                      "この暑さは、まるで何かを追い求めるように僕を駆り立てる。",
+                     "太陽は今日も、僕を試しているようだ。",
+                        "東京の夏は、いつも少しだけ過剰だ。",
+                   "東京の暑さは、まるで僕の記憶の中の熱帯夜を呼び起こす。"
+                  ],
+                 "lowTemp":[
+                      "この寒さは、まるで僕の心の奥底を冷たくするようだ。",
+                      "寒さの中で、僕は何かを探している。",
+                       "今日の寒さは、僕の心に小さな傷を残す。",
+                       "東京の冬は、いつも少しばかり厳しい。",
+                     "東京の寒さは、僕の心を静かに冷やす。"
+                    ]
+
+          },
+          "130020": {
+                "sunny": [
+                   "大島の空は、今日も静かに僕を見下ろしている。",
+                 "太陽の光が、大島の海を眩しく照らしている。",
+                    "大島では、時間がゆっくりと流れているように感じる。"
+                ],
+                "rainy": [
+                    "大島の雨は、静かに全てを洗い流す。",
+                     "雨の音は、大島の緑に静かに響く。",
+                      "この雨は、大島の記憶を濡らしているのだろうか。"
+                ],
+                "cloudy": [
+                   "大島の空は、今日も少しばかり憂鬱そうだ。",
+                     "曇り空の下、大島の静けさが際立つ。",
+                        "大島の空は、僕の心模様を映し出すようだ。"
+                ],
+                "windy":[
+                     "大島の風は、僕をどこか遠くへ連れて行こうとする。",
+                       "風の音は、大島の波の音と重なり合う。",
+                         "大島の風は、僕の心を吹き抜けていくようだ。",
+                ],
+                "highTemp":[
+                       "大島の暑さは、僕の皮膚をじりじりと焦がす。",
+                         "この暑さは、大島の木々を成長させるのだろうか。",
+                       "太陽の光が、大島の海面を熱く照り返す。"
+                ],
+               "lowTemp":[
+                 "大島の寒さは、僕の心を静かに冷やす。",
+                   "寒さの中で、大島の木々は静かに眠る。",
+                     "大島の冬は、静かで、どこか懐かしい。"
+                ]
+
+          },
+          "130030": {
+                "sunny": [
+                     "八丈島の太陽は、まるで異世界のように眩しい。",
+                      "八丈島の光は、僕の心を照らすようだ。",
+                       "八丈島の空は、今日もどこまでも青い。"
+                ],
+                "rainy": [
+                      "八丈島の雨は、僕の知らない世界を洗い流す。",
+                     "雨の音が、八丈島の静けさを際立たせる。",
+                     "八丈島の雨は、どこまでも静かに降り続く。"
+                ],
+                 "cloudy": [
+                     "八丈島の空は、今日もどこか遠くを見ている。",
+                      "曇り空の下、八丈島の海は少しだけ寂しそうに見える。",
+                       "今日の八丈島の空は、少しばかり憂鬱そうだ。"
+                ],
+                "windy":[
+                     "八丈島の風は、どこまでも僕を追いかけてくる。",
+                    "風の音は、八丈島の静けさを切り裂くように響く。",
+                     "八丈島の風は、時々激しく僕を揺さぶる。",
+                ],
+                "highTemp":[
+                    "八丈島の暑さは、まるで僕の魂を焦がすようだ。",
+                      "八丈島の夏は、いつでも熱帯夜を思わせる。",
+                    "八丈島の太陽は、まるで僕の体温を試しているかのようだ。"
+                ],
+                "lowTemp":[
+                    "八丈島の寒さは、僕の心をひっそりと冷やす。",
+                      "寒さの中で、八丈島の夜空はどこまでも澄み渡る。",
+                    "八丈島の冬は、どこか旅愁を誘う。"
+                ]
+          },
+          "130040": {
+              "sunny": [
+                    "父島の空は、僕の記憶よりもずっと青い。",
+                     "父島の太陽は、まるで昔の恋人のように懐かしい。",
+                    "父島の光は、僕の心を優しく包み込む。"
+                ],
+                "rainy": [
+                     "父島の雨は、まるで僕の過去を洗い流すかのようだ。",
+                    "雨の音は、父島の静寂を深める。",
+                      "父島の雨は、どこか遠い記憶を呼び覚ます。"
+                ],
+                 "cloudy": [
+                      "父島の空は、今日も静かに僕を見守っている。",
+                      "曇り空の下、父島の静けさが際立つ。",
+                      "今日の父島の空は、どこか物憂げだ。"
+                ],
+                  "windy":[
+                       "父島の風は、まるで僕の魂を運ぶようだ。",
+                       "風の音は、父島の自然と調和する。",
+                     "父島の風は、まるで僕の心を吹き抜けていくようだ。",
+                ],
+               "highTemp":[
+                     "父島の暑さは、僕の体力を奪っていく。",
+                       "太陽の光は、父島のすべてを照らし出す。",
+                     "この暑さは、僕をどこか遠くへ連れて行こうとしているようだ。"
+                ],
+                "lowTemp":[
+                      "父島の寒さは、僕の心を静かに落ち着かせる。",
+                     "寒さの中、父島の夜空は星屑で埋め尽くされる。",
+                      "父島の冬は、どこかノスタルジックだ。"
+                ]
+          }
+        };
+         function getRandomHarukiComment(locationId, weatherType, tempType) {
+           let comments = [];
+           if (harukiComments[locationId] && weatherType && harukiComments[locationId][weatherType]) {
+             comments = comments.concat(harukiComments[locationId][weatherType]);
+           }
+           if (harukiComments[locationId] && tempType && harukiComments[locationId][tempType]) {
+               comments = comments.concat(harukiComments[locationId][tempType]);
+           }
+
+           if (comments.length > 0) {
+                return comments[Math.floor(Math.random() * comments.length)];
+           }
+          return "今日の天気は、まるで僕の知らない秘密を知っているようだ。";
+         }
+         function formatTime(timeStr){
+             if(timeStr === "T00_06"){
+                 return "午前0時〜6時";
+             } else if(timeStr === "T06_12"){
+                return "午前6時〜12時";
+             } else if (timeStr === "T12_18"){
+                 return "午後12時〜18時";
+             } else if (timeStr === "T18_24"){
+                return "午後18時〜24時";
+             }
+             return timeStr
+          }
+         async function showWeather(){
+            const locationSelect = document.getElementById("locationSelect");
+             const locationId = locationSelect.value;
+             try{
+                 const response = await fetch('/weather?location_id=' + locationId);
+                 const data = await response.json();
+                   const weatherInfoDiv = document.getElementById('weatherInfo');
+                  const extraInfoDiv = document.getElementById('extraInfo');
+                 const windCommentDiv = document.getElementById('windComment');
+                 const harukiCommentDiv = document.getElementById('harukiComment');
+                if (!data || !data.forecasts || data.forecasts.length === 0) {
+                 weatherInfoDiv.innerHTML = "天気情報を取得できませんでした。";
+                 return;
+                }
+                 const weather = data.forecasts[0];
+                  const telop = weather.telop;
+                  let maxTemp = weather.temperature && weather.temperature.max && weather.temperature.max.celsius ? weather.temperature.max.celsius : "不明";
+                   let minTemp = weather.temperature && weather.temperature.min && weather.temperature.min.celsius ? weather.temperature.min.celsius : "不明";
+                     let backgroundImage = "";
+                  let weatherType = "";
+                  if (telop.includes("晴")) {
+                          weatherType = "sunny"
+                         backgroundImage = "https://images.unsplash.com/photo-1501984743583-98f206d71189?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"; // 晴れの画像URL
+                     } else if (telop.includes("雨")) {
+                        weatherType = "rainy"
+                       backgroundImage = "https://images.unsplash.com/photo-1485297762688-9d24b1e1f006?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"; // 雨の画像URL
+                   } else if (telop.includes("曇")) {
+                           weatherType = "cloudy"
+                         backgroundImage = "https://images.unsplash.com/photo-1578140350173-aa89d23d653d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"; // 曇りの画像URL
+                    } else {
+                        backgroundImage = "https://images.unsplash.com/photo-1528744742512-6e96562f14e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"; //デフォルトの画像URL
+                   }
+                    document.body.style.backgroundImage = `url('${backgroundImage}')`;
+                     weatherInfoDiv.innerHTML = `
+                        <h2>${data.location.city}</h2>
+                        <h3>${weather.dateLabel} ${telop}</h3>
+                        <p>最高気温: ${maxTemp}℃</p>
+                        <p>最低気温: ${minTemp}℃</p>
+                        <img src="${weather.image.url}" alt="${telop}">
+                    `;
+                 let rainInfo = "";
+                     if (data.forecasts[0].chanceOfRain){
+                        for(const key in data.forecasts[0].chanceOfRain){
+                         rainInfo += `<p>${formatTime(key)}: ${data.forecasts[0].chanceOfRain[key]}</p>`;
+                        }
+                      }
+                    extraInfoDiv.innerHTML = `<p>降水確率: ${rainInfo}</p>`;
+
+                 if (data.forecasts[0].winds){
+                    const wind = data.forecasts[0].winds[0];
+                       let tempType ="";
+                      if(maxTemp !== "不明" && Number(maxTemp) > 25){
+                        tempType = "highTemp";
+                      } else if (maxTemp !== "不明" && Number(maxTemp) < 10){
+                       tempType = "lowTemp";
+                      }
+                   let windType ="";
+                      if(Number(wind.max) > 10){
+                        windType = "windy";
+                      }
+                     extraInfoDiv.innerHTML += `
+                          <p>風速(最大): ${wind.max}m/s</p>
+                         <p>風速(平均): ${wind.avg}m/s</p>
+                     `
+                    harukiCommentDiv.innerHTML = `<b>${getRandomHarukiComment(locationId, weatherType, tempType) + getRandomHarukiComment(locationId, windType)}</b>`;
+                 }else{
+                    let tempType ="";
+                      if(maxTemp !== "不明" && Number(maxTemp) > 25){
+                        tempType = "highTemp";
+                      } else if (maxTemp !== "不明" && Number(maxTemp) < 10){
+                       tempType = "lowTemp";
+                      }
+                     harukiCommentDiv.innerHTML = `<b>${getRandomHarukiComment(locationId, weatherType, tempType)}</b>`;
+                 }
+                 if (data.wind_comment){
+                 windCommentDiv.innerHTML = `<p>${data.wind_comment}</p>`
+                 }
+            } catch (error){
+            console.error("エラーが発生しました:", error);
+             document.getElementById('weatherInfo').innerHTML = "天気情報を取得できませんでした。";
+           }
+        }
+    </script>
+</body>
+</html>
